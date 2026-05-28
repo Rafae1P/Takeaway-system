@@ -45,7 +45,26 @@ def CreateUtilityBarButtons():
     #Adding Cart button to grid
     CartButton.grid(column=2, row=1,sticky="nse")
 
+def CreatRestrauntButtuns():
+   
+   for i in rang(3):
+       
+
+
 CreateUtilityBarGrid()
 CreateHomePageGrid()
 CreateUtilityBarButtons()
+
+download_icon = tkinter.PhotoImage(file="./assets/placeholder.png")
+download_button = ttk.Button(root, image=download_icon)
+download_button.grid(column=0, row=2)
+
+
 root.mainloop()
+
+
+
+
+
+
+
