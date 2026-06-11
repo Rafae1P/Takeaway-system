@@ -16,11 +16,20 @@ style.configure("BlueStyle", background="Blue", borderwidth=2, relief="solid" )
 
 def CreateUtilityBarGrid(Frame):
 
-    Frame.rowconfigure(0, weight = 0, minsize=40)
-    for column in range(3):
-        ttk.Label(Frame,  background="Blue", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
-        Frame.columnconfigure(column, weight=1)
+    Frame.rowconfigure(0, weight=0, minsize=40)
+    Frame.columnconfigure(0, weight=1)
 
+    UtilityBarFrame = ttk.Frame(Frame)
+    UtilityBarFrame.rowconfigure(0, weight=1)
+    UtilityBarFrame.grid(row=0, column=0, sticky="nsew")
+
+
+    for column in range(3):
+
+        UtilityBarFrame.columnconfigure(column, weight=2)
+        ttk.Label(UtilityBarFrame,  background="Green", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+
+ 
 
 def CreateHomePageGrid(HomePageFrame):
 
@@ -33,16 +42,30 @@ def CreateHomePageGrid(HomePageFrame):
         HomePageFrame.columnconfigure(column, weight=1)
 
 
-def CrateMenuPageGrid(MenuPageFrame):
+def CreateMenuPageGrid(MenuPageFrame):
+
 
     CreateUtilityBarGrid(MenuPageFrame)
 
-    for row in range(4):
-        ttk.Label(MenuPageFrame, background="Red",)
-
     MenuPageFrame.rowconfigure(1, weight=1)
+    ttk.Label(MenuPageFrame, background="Red", borderwidth=2, relief="solid").grid(row=1, column=0, sticky="nsew")
+
+    MenuPageFrame.rowconfigure(2, weight=2)
+    
+
+    MenuPageRow2Frame = ttk.Frame(MenuPageFrame)
+    MenuPageRow2Frame.grid(row=2, column=0, sticky="nsew")
+    MenuPageRow2Frame.rowconfigure(0, weight=1)
+
+    for column in range(4):
+        MenuPageRow2Frame.columnconfigure(column, weight=1)
+        ttk.Label(MenuPageRow2Frame, background="Red", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
 
 
+
+def CreateCheckoutFrameGrid():
+
+    CreateCheckoutFrame.row
 
 
 
@@ -103,7 +126,7 @@ def ConfirmExit():
 
 
 
-def CreatHomePageFrame():
+def CreateHomePageFrame():
     HomePageFrame = ttk.Frame(root)
     HomePageFrame.pack(fill='both', expand=True)
 
@@ -115,7 +138,13 @@ def CreateMenuPageFrame():
     MenuPageFrame = ttk.Frame(root)
     MenuPageFrame.pack(fill='both', expand=True)
 
+    CreateMenuPageGrid(MenuPageFrame)
 
+def CreateCheckoutFrame():
+    CheckoutFrame = ttk.Frame(root)
+    CheckoutFrame.pack(fill="both", expand=True)
+
+CreateMenuPageFrame()
 
 root.mainloop()
 
