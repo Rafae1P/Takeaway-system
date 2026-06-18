@@ -14,7 +14,7 @@ style.configure("BlueStyle", background="Blue", borderwidth=2, relief="solid" )
 
 
 
-def CreateUtilityBarGrid(Frame):
+def CreateUtilityBarGridAndButtons(Frame):
 
     Frame.rowconfigure(0, weight=0, minsize=40)
     Frame.columnconfigure(0, weight=1)
@@ -29,23 +29,32 @@ def CreateUtilityBarGrid(Frame):
         UtilityBarFrame.columnconfigure(column, weight=2)
         ttk.Label(UtilityBarFrame,  background="Green", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
 
+    CreateUtilityBarButtons(UtilityBarFrame)
+
  
 
-def CreateHomePageGrid(HomePageFrame):
+def CreateHomePageGridAndButtons(HomePageFrame):
 
-    CreateUtilityBarGrid(HomePageFrame)
+    CreateUtilityBarGridAndButtons(HomePageFrame)
+
 
     HomePageFrame.rowconfigure(1, weight=1)
+    RestrauntButtonRow = ttk.Frame(HomePageFrame)
+    RestrauntButtonRow.grid(row=1, column=0, sticky="nsew")
+    RestrauntButtonRow.rowconfigure(0, weight=1)
+
 
     for column in range(3):
-        ttk.Label(HomePageFrame,  background="Blue", borderwidth=2, relief="solid").grid(row=1, column=column, sticky="nsew")
-        HomePageFrame.columnconfigure(column, weight=1)
+        ttk.Label(RestrauntButtonRow,  background="Blue", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+        RestrauntButtonRow.columnconfigure(column, weight=1)
+
+    CreateHomePageButtons(RestrauntButtonRow)
 
 
-def CreateMenuPageGrid(MenuPageFrame):
+def CreateMenuPageGridAndButtons(MenuPageFrame):
 
 
-    CreateUtilityBarGrid(MenuPageFrame)
+    CreateUtilityBarGridAndButtons(MenuPageFrame)
 
     MenuPageFrame.rowconfigure(1, weight=1)
     ttk.Label(MenuPageFrame, background="Red", borderwidth=2, relief="solid").grid(row=1, column=0, sticky="nsew")
@@ -63,9 +72,39 @@ def CreateMenuPageGrid(MenuPageFrame):
 
 
 
-def CreateCheckoutFrameGrid():
+    CreateMenuPageButtons(MenuPageFrame, MenuPageRow2Frame)
 
-    CreateCheckoutFrame.row
+
+
+def CreateCheckoutFrameGridAndButtons(CheckoutFrame):
+
+    CreateUtilityBarGridAndButtons(CheckoutFrame)
+
+    CheckoutFrame.rowconfigure(1, weight=1)
+    ttk.Label(CheckoutFrame, background="Pink", borderwidth=2, relief="solid").grid(row=1, column=0, sticky="nsew")
+
+    CheckoutFrameRow = ttk.Frame(CheckoutFrame)
+    CheckoutFrameRow.grid(row=1, column=0, sticky="nsew")
+    CheckoutFrameRow.rowconfigure(0, weight=1)
+
+    for column in range(2):
+        CheckoutFrameRow.columnconfigure(column, weight=1)
+        ttk.Label(CheckoutFrameRow, background="Pink", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+
+
+    CheckoutButtonsFrame = ttk.Frame(CheckoutFrameRow)
+    CheckoutButtonsFrame.grid(row=0, column=1, sticky="nsew")
+    CheckoutButtonsFrame.columnconfigure(0, weight=1)
+
+    for row in range(3):
+        CheckoutButtonsFrame.rowconfigure(row, weight=1)
+        ttk.Label(CheckoutButtonsFrame, background="Pink", borderwidth=2, relief="solid").grid(row=row, column=0, sticky="nsew")
+
+
+
+
+
+
 
 
 
@@ -90,28 +129,62 @@ def CreateUtilityBarButtons(Frame):
     CartButton.grid(column=2, row=0,sticky="nse")
 
 
-def CreatHomePageButtons(HomePageFrame):
+def CreateHomePageButtons(RestrauntButtonRow):
 
-    CreateUtilityBarButtons(HomePageFrame)
 
     PlaceHolderImage = tkinter.PhotoImage(file="./assets/placeholder.png")
 
    
-    RestrauntButtonLeft = ttk.Button(HomePageFrame, image=PlaceHolderImage)
+    RestrauntButtonLeft = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage)
 
-    RestrauntButtonLeft.grid(column=0, row=1)
+    RestrauntButtonLeft.grid(column=0, row=0)
 
     RestrauntButtonLeft.image = PlaceHolderImage
+    
 
-    RestrauntButtonMiddle = ttk.Button(HomePageFrame, image=PlaceHolderImage)
+    RestrauntButtonMiddle = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage)
 
-    RestrauntButtonMiddle.grid(column=1,row=1)
+    RestrauntButtonMiddle.grid(column=1,row=0)
 
 
-    RestrauntButtonRight = ttk.Button(HomePageFrame, image=PlaceHolderImage)
+    RestrauntButtonRight = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage)
 
-    RestrauntButtonRight.grid(column=2,row=1)
+    RestrauntButtonRight.grid(column=2,row=0)
        
+
+
+def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame):
+
+    PlaceHolderImage = tkinter.PhotoImage(file="./assets/placeholder.png")
+
+    RestrauntLogoImage = ttk.Button(MenuPageRow1Frame, image=PlaceHolderImage)
+
+    RestrauntLogoImage.grid(column=0, row=1)
+
+    RestrauntLogoImage.image = PlaceHolderImage
+
+
+    Option1 = ttk.Button(MenuPageRow2Frame)
+
+    Option1.grid(column=0, row=0)
+
+
+    Option2 = ttk.Button(MenuPageRow2Frame)
+
+    Option2.grid(column=1, row=0)
+
+
+    Option3 = ttk.Button(MenuPageRow2Frame)
+
+    Option3.grid(column=2, row=0)
+
+
+    Option4 = ttk.Button(MenuPageRow2Frame)
+
+    Option4.grid(column=3, row=0)
+
+
+
 
 #Function to confirm if user wants to exit
 def ConfirmExit():
@@ -130,19 +203,19 @@ def CreateHomePageFrame():
     HomePageFrame = ttk.Frame(root)
     HomePageFrame.pack(fill='both', expand=True)
 
-    CreateHomePageGrid(HomePageFrame)
-    CreatHomePageButtons(HomePageFrame)
+    CreateHomePageGridAndButtons(HomePageFrame)
 
 
 def CreateMenuPageFrame():
     MenuPageFrame = ttk.Frame(root)
     MenuPageFrame.pack(fill='both', expand=True)
 
-    CreateMenuPageGrid(MenuPageFrame)
+    CreateMenuPageGridAndButtons(MenuPageFrame)
 
-def CreateCheckoutFrame():
+def CreateCheckoutPageFrame():
     CheckoutFrame = ttk.Frame(root)
     CheckoutFrame.pack(fill="both", expand=True)
+    CreateCheckoutFrameGridAndButtons(CheckoutFrame)
 
 CreateMenuPageFrame()
 
