@@ -14,6 +14,23 @@ style.configure("BlueStyle", background="Blue", borderwidth=2, relief="solid" )
 
 
 
+
+
+PlaceHolderFrame = ttk.Frame(root)
+PlaceHolderFrame.pack()
+print(PlaceHolderFrame)
+
+global CurrentFrameTracker
+
+CurrentFrameTracker = PlaceHolderFrame
+print(CurrentFrameTracker)
+
+
+
+
+
+
+
 def CreateUtilityBarGridAndButtons(Frame):
 
     Frame.rowconfigure(0, weight=0, minsize=40)
@@ -117,7 +134,7 @@ def CreateUtilityBarButtons(Frame):
     ExitButton.grid(column=0, row=0, sticky="nsw")
 
     #Creating home page button
-    HomePageButton = ttk.Button(Frame, text="Home Page")
+    HomePageButton = ttk.Button(Frame, text="Home Page", command=CreateHomePageFrame)
 
     #Adding home page button to grid
     HomePageButton.grid(column=1, row=0, sticky="nsw")
@@ -135,19 +152,19 @@ def CreateHomePageButtons(RestrauntButtonRow):
     PlaceHolderImage = tkinter.PhotoImage(file="./assets/placeholder.png")
 
    
-    RestrauntButtonLeft = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage)
+    RestrauntButtonLeft = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowHiSushiMenu)
 
     RestrauntButtonLeft.grid(column=0, row=0)
 
     RestrauntButtonLeft.image = PlaceHolderImage
     
 
-    RestrauntButtonMiddle = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage)
+    RestrauntButtonMiddle = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowHeavensPizzaMenu)
 
     RestrauntButtonMiddle.grid(column=1,row=0)
 
 
-    RestrauntButtonRight = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage)
+    RestrauntButtonRight = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowRailwayMenu)
 
     RestrauntButtonRight.grid(column=2,row=0)
        
@@ -179,17 +196,26 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame):
     Option3.grid(column=2, row=0)
 
 
-    Option4 = ttk.Button(MenuPageRow2Frame)
+    ToCheckout = ttk.Button(MenuPageRow2Frame, text="Checkout", command=CreateCheckoutPageFrame)
 
-    Option4.grid(column=3, row=0)
+    ToCheckout.grid(column=3, row=0)
 
 
+
+def ShowHiSushiMenu():
+    CreateMenuPageFrame()
+
+def ShowHeavensPizzaMenu():
+    CreateMenuPageFrame()
+
+def ShowRailwayMenu():
+    CreateMenuPageFrame()
 
 
 #Function to confirm if user wants to exit
 def ConfirmExit():
 
-#The askyesno function is called which creates a pop up with a message and to options and returns True or False
+#The askyesno function is called which Creates a pop up with a message and to options and returns True or False
     ansewer = askyesno(title="Confirmation", message="Are you sure you want to exit?")
 
 #Checking if user wants to qut or not
@@ -200,24 +226,55 @@ def ConfirmExit():
 
 
 def CreateHomePageFrame():
+
+    global CurrentFrameTracker
+
+
+    CurrentFrameTracker.pack_forget()
+
     HomePageFrame = ttk.Frame(root)
     HomePageFrame.pack(fill='both', expand=True)
+
+    CurrentFrameTracker = HomePageFrame
+
 
     CreateHomePageGridAndButtons(HomePageFrame)
 
 
 def CreateMenuPageFrame():
+
+    global CurrentFrameTracker
+
+
+    CurrentFrameTracker.pack_forget()
+
     MenuPageFrame = ttk.Frame(root)
     MenuPageFrame.pack(fill='both', expand=True)
+
+    CurrentFrameTracker = MenuPageFrame
+
 
     CreateMenuPageGridAndButtons(MenuPageFrame)
 
 def CreateCheckoutPageFrame():
+
+    global CurrentFrameTracker
+
+
+    CurrentFrameTracker.pack_forget()
+
     CheckoutFrame = ttk.Frame(root)
     CheckoutFrame.pack(fill="both", expand=True)
+
+    CurrentFrameTracker = CheckoutFrame
+
     CreateCheckoutFrameGridAndButtons(CheckoutFrame)
 
-CreateMenuPageFrame()
+
+
+
+
+CreateHomePageFrame()
 
 root.mainloop()
 
