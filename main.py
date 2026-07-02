@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import ttk 
 from tkinter.messagebox import askyesno
+from tkinter import messagebox
 
 root = tkinter.Tk()
 root.title("title")
@@ -18,12 +19,11 @@ style.configure("BlueStyle", background="Blue", borderwidth=2, relief="solid" )
 
 PlaceHolderFrame = ttk.Frame(root)
 PlaceHolderFrame.pack()
-print(PlaceHolderFrame)
+
 
 global CurrentFrameTracker
 
 CurrentFrameTracker = PlaceHolderFrame
-print(CurrentFrameTracker)
 
 
 
@@ -118,8 +118,8 @@ def CreateCheckoutFrameGridAndButtons(CheckoutFrame):
         ttk.Label(CheckoutButtonsFrame, background="Pink", borderwidth=2, relief="solid").grid(row=row, column=0, sticky="nsew")
 
 
-
-
+    CreateCheckoutButtons(CheckoutButtonsFrame)
+    CreateCartTreeview(CheckoutFrameRow)
 
 
 
@@ -140,7 +140,7 @@ def CreateUtilityBarButtons(Frame):
     HomePageButton.grid(column=1, row=0, sticky="nsw")
 
     #Creating cart button
-    CartButton = ttk.Button(Frame, text="Cart")
+    CartButton = ttk.Button(Frame, text="Cart", command=CreateCheckoutPageFrame)
 
     #Adding Cart button to grid
     CartButton.grid(column=2, row=0,sticky="nse")
@@ -199,6 +199,31 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame):
     ToCheckout = ttk.Button(MenuPageRow2Frame, text="Checkout", command=CreateCheckoutPageFrame)
 
     ToCheckout.grid(column=3, row=0)
+
+
+
+
+def CreateCheckoutButtons(CheckoutButtonsFrame):
+
+    TotalLable = ttk.Label(CheckoutButtonsFrame)
+    TotalLable.grid(column=0, row=0)
+
+    AddressEntry = ttk.Entry(CheckoutButtonsFrame)
+    AddressEntry.grid(column=0, row=1)
+
+    PayButton = ttk.Button(CheckoutButtonsFrame)
+    PayButton.grid(column=0, row=2)
+
+def CreateCartTreeview( CheckoutFrameRow):
+
+    CartTree = ttk.Treeview( CheckoutFrameRow)
+    CartTree.grid(column=0, row=0)
+
+#defining columns
+    CartTreeColumns = ["#0", "Item", "Amount"]
+
+    for i in CartTreeColumns:
+        CartTree.column(i, width=120)
 
 
 
