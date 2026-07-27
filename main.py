@@ -256,6 +256,12 @@ def ShowPopUp():
 
     CreatePopUpGrid(PopUpWindow)
 
+    PlusButton = ttk.Button(PopUpWindow, text="+")
+    PlusButton.grid(row=0, column=2)
+    MinusButton = ttk.Button(PopUpWindow, text="-")
+    MinusButton.grid(row=0, column=0)
+    QuantityDisplay = ttk.Label(PopUpWindow, text="0")
+    QuantityDisplay.grid(row=0, column=1)
 
     ExitButton = ttk.Button(PopUpWindow, text="Submit", command=PopUpWindow.destroy)
     ExitButton.grid(row=1,column=1)
@@ -264,11 +270,11 @@ def CreatePopUpGrid(PopUpWindow):
         
     for column in range(3):
         PopUpWindow.columnconfigure(column, weight=1)
-        ttk.Label(PopUpWindow, background="Pink", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+
 
     for row in range(2):
         PopUpWindow.rowconfigure(row, weight=1)
-        ttk.Label(PopUpWindow, background="Pink", borderwidth=2, relief="solid").grid(row=row, column=0, sticky="nsew")
+
 
 
 def CreateHomePageFrame():
