@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import ttk 
 from tkinter.messagebox import askyesno
-from tkinter import messagebox
+
 
 root = tkinter.Tk()
 root.title("title")
@@ -181,7 +181,7 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame):
     RestrauntLogoImage.image = PlaceHolderImage
 
 
-    Option1 = ttk.Button(MenuPageRow2Frame)
+    Option1 = ttk.Button(MenuPageRow2Frame, text="test", command=ShowPopUp)
 
     Option1.grid(column=0, row=0)
 
@@ -243,11 +243,32 @@ def ConfirmExit():
 #The askyesno function is called which Creates a pop up with a message and to options and returns True or False
     ansewer = askyesno(title="Confirmation", message="Are you sure you want to exit?")
 
-#Checking if user wants to qut or not
+#Checking if user wants to quit or not
     if ansewer == True:
         root.destroy()
 
+def ShowPopUp():
 
+    PopUpWindow = tkinter.Toplevel(root)
+    PopUpWindow.geometry("200x150")
+
+    PopUpWindow.grab_set()
+
+    CreatePopUpGrid(PopUpWindow)
+
+
+    ExitButton = ttk.Button(PopUpWindow, text="Submit", command=PopUpWindow.destroy)
+    ExitButton.grid(row=1,column=1)
+
+def CreatePopUpGrid(PopUpWindow):
+        
+    for column in range(3):
+        PopUpWindow.columnconfigure(column, weight=1)
+        ttk.Label(PopUpWindow, background="Pink", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+
+    for row in range(2):
+        PopUpWindow.rowconfigure(row, weight=1)
+        ttk.Label(PopUpWindow, background="Pink", borderwidth=2, relief="solid").grid(row=row, column=0, sticky="nsew")
 
 
 def CreateHomePageFrame():
