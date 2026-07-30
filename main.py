@@ -71,7 +71,7 @@ def CreateHomePageGridAndButtons(HomePageFrame):
     CreateHomePageButtons(RestrauntButtonRow)
 
 
-def CreateMenuPageGridAndButtons(MenuPageFrame):
+def CreateMenuPageGridAndButtons(MenuPageFrame, Elements):
 
 
     CreateUtilityBarGridAndButtons(MenuPageFrame)
@@ -92,7 +92,7 @@ def CreateMenuPageGridAndButtons(MenuPageFrame):
 
 
 
-    CreateMenuPageButtons(MenuPageFrame, MenuPageRow2Frame)
+    CreateMenuPageButtons(MenuPageFrame, MenuPageRow2Frame, Elements)
 
 
 
@@ -173,15 +173,21 @@ def CreateHomePageButtons(RestrauntButtonRow):
        
 
 
-def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame):
+def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame, Elements):
 
-    PlaceHolderImage = tkinter.PhotoImage(file="./assets/placeholder.png")
+#tkinter.PhotoImage(file=RestrauntLogoImagePath[1])
+    
+    RestrauntLogoImagePath = list(Elements.items())[0]
 
-    RestrauntLogoImage = ttk.Button(MenuPageRow1Frame, image=PlaceHolderImage)
+    RestrauntLogoImage = tkinter.PhotoImage(file=RestrauntLogoImagePath[1])
 
-    RestrauntLogoImage.grid(column=0, row=1)
+    RestrauntLogoImageLabel = ttk.Label(MenuPageRow1Frame, image=RestrauntLogoImage)
 
-    RestrauntLogoImage.image = PlaceHolderImage
+    RestrauntLogoImageLabel.grid(column=0, row=1)
+
+    RestrauntLogoImageLabel.image = RestrauntLogoImage
+
+
 
 
     Option1 = ttk.Button(MenuPageRow2Frame, text="test", command=ShowPopUp)
@@ -232,21 +238,22 @@ def CreateCartTreeview( CheckoutFrameRow):
 
 def ShowHiSushiMenu():
 
-    HiSushiElements = ["HiSushiBanner", "Teriyaki Chicken Sushi", "Salmon Sushi", "Apple Juice" ]
+    HiSushiElements = {"HiSushiBanner": "./assets/placeholder.png", "Teriyaki Chicken Sushi": "./assets/placeholder.png", "Salmon Sushi": "./assets/placeholder.png", "Apple Juice": "./assets/placeholder.png"}
 
-    CreateMenuPageFrame()
+    CreateMenuPageFrame(HiSushiElements)
 
 def ShowHeavensPizzaMenu():
 
-    HeavensPizzaElements = ["HeavensPizzaBanner", "Pepperoni", "Hawaiian", "Orange Juice"]
+    HeavensPizzaElements = {"HeavensPizzaBanner": "./assets/placeholder.png", "Pepperoni": "./assets/placeholder.png", "Hawaiian": "./assets/placeholder.png", "Orange Juice": "./assets/placeholder.png"}
 
-    CreateMenuPageFrame()
+    CreateMenuPageFrame(HeavensPizzaElements)
 
 def ShowRailwayMenu():
 
-    RailwayElements = ["RailwayBanner", "Italian Meatball", "Veggie Special", "Mango juice"]
+    RailwayElements = {"RailwayBanner": "./assets/placeholder.png", "Italian Meatball": "./assets/placeholder.png", "Veggie Special": "./assets/placeholder.png", "Mango juice": "./assets/placeholder.png"}
 
-    CreateMenuPageFrame()
+    CreateMenuPageFrame(RailwayElements)
+
 
 
 #Function to confirm if user wants to exit
@@ -308,7 +315,7 @@ def CreateHomePageFrame():
     CreateHomePageGridAndButtons(HomePageFrame)
 
 
-def CreateMenuPageFrame():
+def CreateMenuPageFrame(Elements):
 
     global CurrentFrameTracker
 
@@ -321,7 +328,7 @@ def CreateMenuPageFrame():
     CurrentFrameTracker = MenuPageFrame
 
 
-    CreateMenuPageGridAndButtons(MenuPageFrame)
+    CreateMenuPageGridAndButtons(MenuPageFrame, Elements)
 
 def CreateCheckoutPageFrame():
 
