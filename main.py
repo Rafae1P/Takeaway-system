@@ -26,6 +26,9 @@ global CurrentFrameTracker
 CurrentFrameTracker = PlaceHolderFrame
 
 
+ItemQuantityTracker = tkinter.IntVar(value=0)
+
+
 
 
 
@@ -228,12 +231,21 @@ def CreateCartTreeview( CheckoutFrameRow):
 
 
 def ShowHiSushiMenu():
+
+    HiSushiElements = ["HiSushiBanner", "Teriyaki Chicken Sushi", "Salmon Sushi", "Apple Juice" ]
+
     CreateMenuPageFrame()
 
 def ShowHeavensPizzaMenu():
+
+    HeavensPizzaElements = ["HeavensPizzaBanner", "Pepperoni", "Hawaiian", "Orange Juice"]
+
     CreateMenuPageFrame()
 
 def ShowRailwayMenu():
+
+    RailwayElements = ["RailwayBanner", "Italian Meatball", "Veggie Special", "Mango juice"]
+
     CreateMenuPageFrame()
 
 
@@ -256,11 +268,14 @@ def ShowPopUp():
 
     CreatePopUpGrid(PopUpWindow)
 
+
     PlusButton = ttk.Button(PopUpWindow, text="+")
     PlusButton.grid(row=0, column=2)
+
     MinusButton = ttk.Button(PopUpWindow, text="-")
     MinusButton.grid(row=0, column=0)
-    QuantityDisplay = ttk.Label(PopUpWindow, text="0")
+
+    QuantityDisplay = ttk.Label(PopUpWindow, textvariable=ItemQuantityTracker)
     QuantityDisplay.grid(row=0, column=1)
 
     ExitButton = ttk.Button(PopUpWindow, text="Submit", command=PopUpWindow.destroy)
