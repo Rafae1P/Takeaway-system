@@ -21,10 +21,13 @@ PlaceHolderFrame = ttk.Frame(root)
 PlaceHolderFrame.pack()
 
 
-global CurrentFrameTracker
+global CurrentQuantityFrameTracker
 
-CurrentFrameTracker = PlaceHolderFrame
+CurrentQuantityFrameTracker = PlaceHolderFrame
 
+global CurrentOrder
+
+CurrentOrder = {}
 
 ItemQuantityTracker = tkinter.IntVar(value=0)
 
@@ -152,7 +155,7 @@ def CreateUtilityBarButtons(Frame):
 def CreateHomePageButtons(RestrauntButtonRow):
 
 
-    PlaceHolderImage = tkinter.PhotoImage(file="./assets/placeholder.png")
+    PlaceHolderImage = tkinter.PhotoImage(file="./Assets/placeholder.png")
 
    
     RestrauntButtonLeft = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowHiSushiMenu)
@@ -188,19 +191,23 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame, Elements):
     RestrauntLogoImageLabel.image = RestrauntLogoImage
 
 
+    Option1Item, Option1ImagePath = list(Elements.items())[1]
 
-
-    Option1 = ttk.Button(MenuPageRow2Frame, text="test", command=ShowPopUp)
+    Option1 = ttk.Button(MenuPageRow2Frame, text=Option1Item, command=lambda item=Option1Item: ShowPopUp(item))
 
     Option1.grid(column=0, row=0)
 
+    
+    Option2Item, Option2ImagePath = list(Elements.items())[2]
 
-    Option2 = ttk.Button(MenuPageRow2Frame)
+    Option2 = ttk.Button(MenuPageRow2Frame, text=Option2Item, command=lambda item=Option2Item: ShowPopUp(item))
 
     Option2.grid(column=1, row=0)
 
 
-    Option3 = ttk.Button(MenuPageRow2Frame)
+    Option3Item, Option3ImagePath = list(Elements.items())[3]
+
+    Option3 = ttk.Button(MenuPageRow2Frame, text=Option3Item, command=lambda item=Option3Item: ShowPopUp(item))
 
     Option3.grid(column=2, row=0)
 
@@ -238,19 +245,19 @@ def CreateCartTreeview( CheckoutFrameRow):
 
 def ShowHiSushiMenu():
 
-    HiSushiElements = {"HiSushiBanner": "./assets/placeholder.png", "Teriyaki Chicken Sushi": "./assets/placeholder.png", "Salmon Sushi": "./assets/placeholder.png", "Apple Juice": "./assets/placeholder.png"}
+    HiSushiElements = {"HiSushiBanner": "./Assets/placeholder.png", "Teriyaki Chicken Sushi": "./Assets/placeholder.png", "Salmon Sushi": "./Assets/placeholder.png", "Apple Juice": "./Assets/placeholder.png"}
 
     CreateMenuPageFrame(HiSushiElements)
 
 def ShowHeavensPizzaMenu():
 
-    HeavensPizzaElements = {"HeavensPizzaBanner": "./assets/placeholder.png", "Pepperoni": "./assets/placeholder.png", "Hawaiian": "./assets/placeholder.png", "Orange Juice": "./assets/placeholder.png"}
+    HeavensPizzaElements = {"HeavensPizzaBanner": "./Assets/placeholder.png", "Pepperoni": "./Assets/placeholder.png", "Hawaiian": "./Assets/placeholder.png", "Orange Juice": "./Assets/placeholder.png"}
 
     CreateMenuPageFrame(HeavensPizzaElements)
 
 def ShowRailwayMenu():
 
-    RailwayElements = {"RailwayBanner": "./assets/placeholder.png", "Italian Meatball": "./assets/placeholder.png", "Veggie Special": "./assets/placeholder.png", "Mango juice": "./assets/placeholder.png"}
+    RailwayElements = {"RailwayBanner": "./Assets/placeholder.png", "Italian Meatball": "./Assets/placeholder.png", "Veggie Special": "./Assets/placeholder.png", "Mango juice": "./Assets/placeholder.png"}
 
     CreateMenuPageFrame(RailwayElements)
 
@@ -266,27 +273,62 @@ def ConfirmExit():
     if ansewer == True:
         root.destroy()
 
-def ShowPopUp():
+def ShowPopUp(CurrentItem):
+    global CurrentOrder
 
     PopUpWindow = tkinter.Toplevel(root)
-    PopUpWindow.geometry("200x150")
+    PopUpWindow.geometry("200x150+500+200")
+    PopUpWindow.title(CurrentItem)
 
     PopUpWindow.grab_set()
 
     CreatePopUpGrid(PopUpWindow)
 
+    item_quantity_var = tkinter.IntVar(value=CurrentOrder.get(CurrentItem, 0))
 
-    PlusButton = ttk.Button(PopUpWindow, text="+")
+    print(item_quantity_var.get())
+
+    PlusButton = ttk.Button(PopUpWindow, text="+", command=lambda: IncreaseItemQuantity(item_quantity_var))
     PlusButton.grid(row=0, column=2)
 
-    MinusButton = ttk.Button(PopUpWindow, text="-")
+    MinusButton = ttk.Button(PopUpWindow, text="-", command=lambda: DecreaseItemQuantity(item_quantity_var))
     MinusButton.grid(row=0, column=0)
 
-    QuantityDisplay = ttk.Label(PopUpWindow, textvariable=ItemQuantityTracker)
+    QuantityDisplay = ttk.Label(PopUpWindow, textvariable=item_quantity_var)
     QuantityDisplay.grid(row=0, column=1)
 
-    ExitButton = ttk.Button(PopUpWindow, text="Submit", command=PopUpWindow.destroy)
-    ExitButton.grid(row=1,column=1)
+    ExitButton = ttk.Button(PopUpWindow, text="Submit", command=lambda: SubmitOrder(PopUpWindow, CurrentItem, item_quantity_var))
+    ExitButton.grid(row=1, column=1)
+
+
+def IncreaseItemQuantity(quantity_var):
+
+    CurrentQuantity = quantity_var.get()
+    quantity_var.set(CurrentQuantity + 1)
+
+
+def DecreaseItemQuantity(quantity_var):
+
+    CurrentQuantity = quantity_var.get()
+
+    if CurrentQuantity > 0:
+        quantity_var.set(CurrentQuantity - 1)
+
+
+def SubmitOrder(PopUpWindow, CurrentItem, quantity_var):
+    global CurrentOrder
+
+    CurrentItemQuantity = quantity_var.get()
+
+    CurrentOrder[CurrentItem] = CurrentItemQuantity
+
+    print(CurrentOrder)
+
+    PopUpWindow.destroy()
+
+    
+
+
 
 def CreatePopUpGrid(PopUpWindow):
         
@@ -301,15 +343,15 @@ def CreatePopUpGrid(PopUpWindow):
 
 def CreateHomePageFrame():
 
-    global CurrentFrameTracker
+    global CurrentQuantityFrameTracker
 
 
-    CurrentFrameTracker.pack_forget()
+    CurrentQuantityFrameTracker.pack_forget()
 
     HomePageFrame = ttk.Frame(root)
     HomePageFrame.pack(fill='both', expand=True)
 
-    CurrentFrameTracker = HomePageFrame
+    CurrentQuantityFrameTracker = HomePageFrame
 
 
     CreateHomePageGridAndButtons(HomePageFrame)
@@ -317,30 +359,30 @@ def CreateHomePageFrame():
 
 def CreateMenuPageFrame(Elements):
 
-    global CurrentFrameTracker
+    global CurrentQuantityFrameTracker
 
 
-    CurrentFrameTracker.pack_forget()
+    CurrentQuantityFrameTracker.pack_forget()
 
     MenuPageFrame = ttk.Frame(root)
     MenuPageFrame.pack(fill='both', expand=True)
 
-    CurrentFrameTracker = MenuPageFrame
+    CurrentQuantityFrameTracker = MenuPageFrame
 
 
     CreateMenuPageGridAndButtons(MenuPageFrame, Elements)
 
 def CreateCheckoutPageFrame():
 
-    global CurrentFrameTracker
+    global CurrentQuantityFrameTracker
 
 
-    CurrentFrameTracker.pack_forget()
+    CurrentQuantityFrameTracker.pack_forget()
 
     CheckoutFrame = ttk.Frame(root)
     CheckoutFrame.pack(fill="both", expand=True)
 
-    CurrentFrameTracker = CheckoutFrame
+    CurrentQuantityFrameTracker = CheckoutFrame
 
     CreateCheckoutFrameGridAndButtons(CheckoutFrame)
 
