@@ -230,17 +230,29 @@ def CreateCheckoutButtons(CheckoutButtonsFrame):
     PayButton = ttk.Button(CheckoutButtonsFrame)
     PayButton.grid(column=0, row=2)
 
-def CreateCartTreeview( CheckoutFrameRow):
+def CreateCartTreeview(CheckoutFrameRow):
 
     CartTree = ttk.Treeview( CheckoutFrameRow)
-    CartTree.grid(column=0, row=0)
+    CartTree.grid(column=0, row=0, sticky="N", pady=100)
 
 #defining columns
-    CartTreeColumns = ["#0", "Item", "Amount"]
+    CartTree["columns"] = ["Item", "Quantity", "Total"]
 
-    for i in CartTreeColumns:
-        CartTree.column(i, width=120)
+    CartTree.column("#0", width=0)
+    CartTree.column("Item", anchor="center", width=120)
+    CartTree.column("Quantity", anchor="center", width=120)
+    CartTree.column("Total", anchor="center", width=120)
 
+    CartTree.heading("#0", text="Label", anchor="w")
+    CartTree.heading("Item", text="Item", anchor="center")
+    CartTree.heading("Quantity", text="Quantity", anchor="center")
+    CartTree.heading("Total", text="Total", anchor="center")
+
+    Values = 
+
+    CartTree.insert(parent="", index="end", iid=0, text="Parent", values=("Pizza", 3, "1"))
+
+def 
 
 
 def ShowHiSushiMenu():
@@ -286,7 +298,6 @@ def ShowPopUp(CurrentItem):
 
     item_quantity_var = tkinter.IntVar(value=CurrentOrder.get(CurrentItem, 0))
 
-    print(item_quantity_var.get())
 
     PlusButton = ttk.Button(PopUpWindow, text="+", command=lambda: IncreaseItemQuantity(item_quantity_var))
     PlusButton.grid(row=0, column=2)
