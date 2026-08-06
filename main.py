@@ -221,7 +221,7 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame, Elements):
 
 def CreateCheckoutButtons(CheckoutButtonsFrame):
 
-    TotalLable = ttk.Label(CheckoutButtonsFrame)
+    TotalLable = ttk.Label(CheckoutButtonsFrame, textvariable=TotaPriceVar.get())
     TotalLable.grid(column=0, row=0)
 
     AddressEntry = ttk.Entry(CheckoutButtonsFrame)
@@ -232,13 +232,14 @@ def CreateCheckoutButtons(CheckoutButtonsFrame):
 
 def CreateCartTreeview(CheckoutFrameRow):
 
-    CartTree = ttk.Treeview( CheckoutFrameRow)
+    CartTree = ttk.Treeview(CheckoutFrameRow, height=9)
     CartTree.grid(column=0, row=0, sticky="N", pady=100)
+
 
 #defining columns
     CartTree["columns"] = ["Item", "Quantity", "Total"]
 
-    CartTree.column("#0", width=0)
+    CartTree.column("#0", width=0, minwidth=0)
     CartTree.column("Item", anchor="center", width=120)
     CartTree.column("Quantity", anchor="center", width=120)
     CartTree.column("Total", anchor="center", width=120)
@@ -248,11 +249,47 @@ def CreateCartTreeview(CheckoutFrameRow):
     CartTree.heading("Quantity", text="Quantity", anchor="center")
     CartTree.heading("Total", text="Total", anchor="center")
 
-    Values = 
+    CompleteOrderValues = SortOrderValues()
 
-    CartTree.insert(parent="", index="end", iid=0, text="Parent", values=("Pizza", 3, "1"))
+    iidCounter = 0
+    for CurrentItem in CompleteOrderValues:
+        CartTree.insert(parent="", index="end", iid=iidCounter, text="Parent", values=CurrentItem)
+        iidCounter += 1
 
-def 
+    UpdateTotalPrice(CompleteOrderValues)
+
+
+def UpdateTotalPrice(CompleteOrderValues):
+
+    TotalPriceVar = tkinter.IntVar(value=0)
+
+    for ItemValuesList in CompleteOrderValues:
+
+        for ItemValues in ItemValuesList:
+
+            TotalPriceVar.set(TotalPriceVar.get() + ItemValues[2])
+
+
+
+
+def SortOrderValues():
+    global CurrentOrder
+
+    ItemsPriceDict = {"Teriyaki Chicken Sushi": 7, "Salmon Sushi": 6, "Apple Juice": 3, "Pepperoni": 6, "Hawaiian": 6, "Orange Juice": 3, "Italian Meatball": 7, "Veggie Special": 6, "Mango Juice": 4}
+
+    CurrentOrderNestedList = [list(item) for item in CurrentOrder.items()]
+
+    for i in CurrentOrderNestedList:
+
+        PriceOfCurrentItem = ItemsPriceDict[i[0]]
+
+        TotalPrice = PriceOfCurrentItem * i[1]
+
+        i.append(TotalPrice)
+
+
+    return CurrentOrderNestedList
+
 
 
 def ShowHiSushiMenu():
@@ -269,7 +306,7 @@ def ShowHeavensPizzaMenu():
 
 def ShowRailwayMenu():
 
-    RailwayElements = {"RailwayBanner": "./Assets/placeholder.png", "Italian Meatball": "./Assets/placeholder.png", "Veggie Special": "./Assets/placeholder.png", "Mango juice": "./Assets/placeholder.png"}
+    RailwayElements = {"RailwayBanner": "./Assets/placeholder.png", "Italian Meatball": "./Assets/placeholder.png", "Veggie Special": "./Assets/placeholder.png", "Mango Juice": "./Assets/placeholder.png"}
 
     CreateMenuPageFrame(RailwayElements)
 
