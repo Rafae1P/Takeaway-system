@@ -3,34 +3,35 @@ from tkinter import ttk
 from tkinter.messagebox import askyesno
 
 
+# Create the main application window and configure its size and title
 root = tkinter.Tk()
 root.title("title")
 root.geometry("1200x700+350+150")
 root.resizable(False,False)
 
 
-style = ttk.Style()
-style.configure("BlueStyle", background="Blue", borderwidth=2, relief="solid" )
-
-
-
-
-
-
+# Placeholder frame is used before the first page is shown
 PlaceHolderFrame = ttk.Frame(root)
 PlaceHolderFrame.pack()
 
 
-global CurrentQuantityFrameTracker
+global CurrentFrameTracker
 
-CurrentQuantityFrameTracker = PlaceHolderFrame
+CurrentFrameTracker = PlaceHolderFrame
 
+
+# Shared state for the current order and checkout values
 global CurrentOrder
 
 CurrentOrder = {}
 
-ItemQuantityTracker = tkinter.IntVar(value=0)
+TotalPriceVar = tkinter.IntVar(value=0)
 
+TotalPriceLabelText = tkinter.StringVar()
+
+CurrentSelectedCartItem = tkinter.StringVar()
+
+CurrentAddress = tkinter.StringVar()
 
 
 
@@ -39,6 +40,7 @@ ItemQuantityTracker = tkinter.IntVar(value=0)
 
 def CreateUtilityBarGridAndButtons(Frame):
 
+    # Configure the utility bar  at the top of the page
     Frame.rowconfigure(0, weight=0, minsize=40)
     Frame.columnconfigure(0, weight=1)
 
@@ -47,10 +49,11 @@ def CreateUtilityBarGridAndButtons(Frame):
     UtilityBarFrame.grid(row=0, column=0, sticky="nsew")
 
 
+    # Create three cells in the utility bar for button placement
     for column in range(3):
 
         UtilityBarFrame.columnconfigure(column, weight=2)
-        ttk.Label(UtilityBarFrame,  background="Green", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+        ttk.Label(UtilityBarFrame).grid(row=0, column=column, sticky="nsew")
 
     CreateUtilityBarButtons(UtilityBarFrame)
 
@@ -58,9 +61,11 @@ def CreateUtilityBarGridAndButtons(Frame):
 
 def CreateHomePageGridAndButtons(HomePageFrame):
 
+    # Build the page header and utility buttons
     CreateUtilityBarGridAndButtons(HomePageFrame)
 
 
+    # Create the restaurant selection row
     HomePageFrame.rowconfigure(1, weight=1)
     RestrauntButtonRow = ttk.Frame(HomePageFrame)
     RestrauntButtonRow.grid(row=1, column=0, sticky="nsew")
@@ -68,7 +73,7 @@ def CreateHomePageGridAndButtons(HomePageFrame):
 
 
     for column in range(3):
-        ttk.Label(RestrauntButtonRow,  background="Blue", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+        ttk.Label(RestrauntButtonRow, borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
         RestrauntButtonRow.columnconfigure(column, weight=1)
 
     CreateHomePageButtons(RestrauntButtonRow)
@@ -80,7 +85,7 @@ def CreateMenuPageGridAndButtons(MenuPageFrame, Elements):
     CreateUtilityBarGridAndButtons(MenuPageFrame)
 
     MenuPageFrame.rowconfigure(1, weight=1)
-    ttk.Label(MenuPageFrame, background="Red", borderwidth=2, relief="solid").grid(row=1, column=0, sticky="nsew")
+    ttk.Label(MenuPageFrame, borderwidth=2, relief="solid").grid(row=1, column=0, sticky="nsew")
 
     MenuPageFrame.rowconfigure(2, weight=2)
     
@@ -91,7 +96,7 @@ def CreateMenuPageGridAndButtons(MenuPageFrame, Elements):
 
     for column in range(4):
         MenuPageRow2Frame.columnconfigure(column, weight=1)
-        ttk.Label(MenuPageRow2Frame, background="Red", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
+        ttk.Label(MenuPageRow2Frame, borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
 
 
 
@@ -101,31 +106,57 @@ def CreateMenuPageGridAndButtons(MenuPageFrame, Elements):
 
 def CreateCheckoutFrameGridAndButtons(CheckoutFrame):
 
+    # Build the shared utility bar for the checkout page
     CreateUtilityBarGridAndButtons(CheckoutFrame)
 
+    # Create the row containing the cart view and checkout controls
     CheckoutFrame.rowconfigure(1, weight=1)
-    ttk.Label(CheckoutFrame, background="Pink", borderwidth=2, relief="solid").grid(row=1, column=0, sticky="nsew")
-
+    
     CheckoutFrameRow = ttk.Frame(CheckoutFrame)
     CheckoutFrameRow.grid(row=1, column=0, sticky="nsew")
     CheckoutFrameRow.rowconfigure(0, weight=1)
 
     for column in range(2):
         CheckoutFrameRow.columnconfigure(column, weight=1)
-        ttk.Label(CheckoutFrameRow, background="Pink", borderwidth=2, relief="solid").grid(row=0, column=column, sticky="nsew")
-
-
-    CheckoutButtonsFrame = ttk.Frame(CheckoutFrameRow)
-    CheckoutButtonsFrame.grid(row=0, column=1, sticky="nsew")
-    CheckoutButtonsFrame.columnconfigure(0, weight=1)
+        
+    # Create the right panel with checkout controls
+    CheckoutWidgetsFrame = ttk.Frame(CheckoutFrameRow)
+    CheckoutWidgetsFrame.grid(row=0, column=1, sticky="nsew")
+    CheckoutWidgetsFrame.columnconfigure(0, weight=1)
 
     for row in range(3):
-        CheckoutButtonsFrame.rowconfigure(row, weight=1)
-        ttk.Label(CheckoutButtonsFrame, background="Pink", borderwidth=2, relief="solid").grid(row=row, column=0, sticky="nsew")
+        CheckoutWidgetsFrame.rowconfigure(row, weight=1)
 
 
-    CreateCheckoutButtons(CheckoutButtonsFrame)
-    CreateCartTreeview(CheckoutFrameRow)
+    # Create the address entry panel inside the checkout controls
+    AddressEntryFrame = ttk.Frame(CheckoutWidgetsFrame)
+    AddressEntryFrame.grid(row=1, column=0, sticky="nsew")
+    AddressEntryFrame.rowconfigure(0, weight=1)
+
+    for column in range(2):
+        AddressEntryFrame.columnconfigure(column, weight=1)
+        
+
+    # Create the left panel containing the cart treeview
+    CartTreeviewFrame = ttk.Frame(CheckoutFrameRow)
+    CartTreeviewFrame.grid(row=0, column=0, sticky="nsew")
+    CartTreeviewFrame.columnconfigure(0, weight=1)
+
+    for row in range(2):
+        CartTreeviewFrame.rowconfigure(row, weight=1)
+
+
+    CartTreeviewWidgetFrame = ttk.Frame(CartTreeviewFrame)
+    CartTreeviewWidgetFrame.grid(row=1, column=0, sticky="nsew")
+    CartTreeviewWidgetFrame.columnconfigure(0, weight=1)
+
+    for column in range(3):
+        CartTreeviewWidgetFrame.columnconfigure(column, weight=1)
+    
+
+
+    CreateCheckoutButtons(CheckoutWidgetsFrame, CartTreeviewWidgetFrame, AddressEntryFrame)
+    CreateCartTreeview(CartTreeviewFrame)
 
 
 
@@ -155,31 +186,36 @@ def CreateUtilityBarButtons(Frame):
 def CreateHomePageButtons(RestrauntButtonRow):
 
 
-    PlaceHolderImage = tkinter.PhotoImage(file="./Assets/placeholder.png")
+    HiSushiHomePageImage = tkinter.PhotoImage(file="./Assets/HiSushiHomePage.png")
+    HeavensPizzaHomePageImage = tkinter.PhotoImage(file="./Assets/HeavensPizzaHomePage.png")
+    RailwayHomePageImage = tkinter.PhotoImage(file="./Assets/RailwayHomePage.png")
 
    
-    RestrauntButtonLeft = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowHiSushiMenu)
+    RestrauntButtonLeft = ttk.Button(RestrauntButtonRow, image=HiSushiHomePageImage, command=ShowHiSushiMenu)
 
     RestrauntButtonLeft.grid(column=0, row=0)
 
-    RestrauntButtonLeft.image = PlaceHolderImage
-    
+    RestrauntButtonLeft.image = HiSushiHomePageImage
 
-    RestrauntButtonMiddle = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowHeavensPizzaMenu)
+
+
+    RestrauntButtonMiddle = ttk.Button(RestrauntButtonRow, image=HeavensPizzaHomePageImage, command=ShowHeavensPizzaMenu)
 
     RestrauntButtonMiddle.grid(column=1,row=0)
 
+    RestrauntButtonMiddle.image = HeavensPizzaHomePageImage
 
-    RestrauntButtonRight = ttk.Button(RestrauntButtonRow, image=PlaceHolderImage, command=ShowRailwayMenu)
+
+    RestrauntButtonRight = ttk.Button(RestrauntButtonRow, image=RailwayHomePageImage, command=ShowRailwayMenu)
 
     RestrauntButtonRight.grid(column=2,row=0)
-       
+
+    RestrauntButtonRight.image = RailwayHomePageImage
 
 
 def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame, Elements):
 
-#tkinter.PhotoImage(file=RestrauntLogoImagePath[1])
-    
+    # Show the restaurant banner image at the top of the menu
     RestrauntLogoImagePath = list(Elements.items())[0]
 
     RestrauntLogoImage = tkinter.PhotoImage(file=RestrauntLogoImagePath[1])
@@ -191,27 +227,43 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame, Elements):
     RestrauntLogoImageLabel.image = RestrauntLogoImage
 
 
+    # Add the first menu item button
     Option1Item, Option1ImagePath = list(Elements.items())[1]
 
-    Option1 = ttk.Button(MenuPageRow2Frame, text=Option1Item, command=lambda item=Option1Item: ShowPopUp(item))
+    Option1Image = tkinter.PhotoImage(file=Option1ImagePath)
+
+    Option1 = ttk.Button(MenuPageRow2Frame, image=Option1Image, command=lambda item=Option1Item: ShowPopUp(item))
 
     Option1.grid(column=0, row=0)
 
-    
+    Option1.image = Option1Image
+
+
+    # Add the second menu item button
     Option2Item, Option2ImagePath = list(Elements.items())[2]
 
-    Option2 = ttk.Button(MenuPageRow2Frame, text=Option2Item, command=lambda item=Option2Item: ShowPopUp(item))
+    Option2Image = tkinter.PhotoImage(file=Option2ImagePath)
+
+    Option2 = ttk.Button(MenuPageRow2Frame, image=Option2Image, command=lambda item=Option2Item: ShowPopUp(item))
 
     Option2.grid(column=1, row=0)
 
+    Option2.image = Option2Image
 
+
+    # Add the third menu item button
     Option3Item, Option3ImagePath = list(Elements.items())[3]
 
-    Option3 = ttk.Button(MenuPageRow2Frame, text=Option3Item, command=lambda item=Option3Item: ShowPopUp(item))
+    Option3Image = tkinter.PhotoImage(file=Option3ImagePath)
+
+    Option3 = ttk.Button(MenuPageRow2Frame, image=Option3Image, command=lambda item=Option3Item: ShowPopUp(item))
 
     Option3.grid(column=2, row=0)
 
+    Option3.image = Option3Image
 
+
+    # Add a checkout button to switch to the checkout page
     ToCheckout = ttk.Button(MenuPageRow2Frame, text="Checkout", command=CreateCheckoutPageFrame)
 
     ToCheckout.grid(column=3, row=0)
@@ -219,20 +271,129 @@ def CreateMenuPageButtons(MenuPageRow1Frame, MenuPageRow2Frame, Elements):
 
 
 
-def CreateCheckoutButtons(CheckoutButtonsFrame):
+def CreateCheckoutButtons(CheckoutWidgetsFrame, CartTreeviewWidgetFrame, AddressEntryFrame):
 
-    TotalLable = ttk.Label(CheckoutButtonsFrame, textvariable=TotaPriceVar.get())
+    global CurrentOrder, AddressEntry
+
+    # Display the current total at the top of the checkout controls
+    TotalLable = ttk.Label(CheckoutWidgetsFrame, textvariable=TotalPriceLabelText)
     TotalLable.grid(column=0, row=0)
 
-    AddressEntry = ttk.Entry(CheckoutButtonsFrame)
-    AddressEntry.grid(column=0, row=1)
+    # Create the address input field used for payment delivery
+    AddressLabel = ttk.Label(AddressEntryFrame, text="Address:")
+    AddressLabel.grid(column=0, row=0, sticky="e")
 
-    PayButton = ttk.Button(CheckoutButtonsFrame)
+    AddressEntry = ttk.Entry(AddressEntryFrame)
+    AddressEntry.grid(column=1, row=0, sticky="w")
+
+    PayButton = ttk.Button(CheckoutWidgetsFrame, text="Pay", command=PayConfirmation)
     PayButton.grid(column=0, row=2)
 
-def CreateCartTreeview(CheckoutFrameRow):
+    # Disable the pay button if the cart is empty
+    if CurrentOrder == {}:
+        PayButton.state(["disabled"])
+    else:
+        PayButton.state(["!disabled"])
 
-    CartTree = ttk.Treeview(CheckoutFrameRow, height=9)
+        # Show the selected cart item and cart management buttons
+        CurrentSelectedCartItemLabel = ttk.Label(CartTreeviewWidgetFrame, textvariable=CurrentSelectedCartItem, width=20, anchor="center", borderwidth=2, relief="solid")
+        CurrentSelectedCartItemLabel.grid(row=0, column=0, sticky="nse")
+
+        CurrentOrderKeys = list(CurrentOrder.keys())
+        CurrentSelectedCartItem.set(CurrentOrderKeys[0])
+
+        IteratThroughCartButton = ttk.Button(CartTreeviewWidgetFrame, text="Iterate Through Cart", command=lambda: IterateThroughCart(CurrentOrderKeys))
+        IteratThroughCartButton.grid(row=0, column=1, sticky="nsew")
+
+        DeleteSelectedCartItemButton = ttk.Button(CartTreeviewWidgetFrame, text="Delete Selected Item", command=DeleteSelectedCartItem)
+        DeleteSelectedCartItemButton.grid(row=0, column=2, sticky="nsew")
+
+
+def SetCurrentAddress():
+
+    # Validate that the address field contains text before checkout
+    if AddressEntry.get() != "":
+        CurrentAddress.set(AddressEntry.get())
+        return True
+    else:
+
+        PleaseEnterAddressPopUp = tkinter.Toplevel(root)
+        PleaseEnterAddressPopUp.geometry("200x100+500+200")
+        PleaseEnterAddressPopUp.title("Please Enter Address")
+
+        PleaseEnterAddressLabel = ttk.Label(PleaseEnterAddressPopUp, text="Please enter your address.")
+        PleaseEnterAddressLabel.pack(expand=True) 
+
+        PleaseEnterAddressPopUp.after(2000, PleaseEnterAddressPopUp.destroy)  
+        return False
+
+
+
+
+
+def IterateThroughCart(CurrentOrderKeys):
+
+    global CurrentOrder
+
+    MaximumIndex = len(CurrentOrderKeys) - 1
+
+    CurentSelectedCartItemIndex = CurrentOrderKeys.index(CurrentSelectedCartItem.get())
+
+    if CurentSelectedCartItemIndex < MaximumIndex:
+        CurrentSelectedCartItem.set(CurrentOrderKeys[CurentSelectedCartItemIndex + 1])
+    else:
+        CurrentSelectedCartItem.set(CurrentOrderKeys[0])
+
+
+def DeleteSelectedCartItem():
+
+    global CurrentOrder
+
+    ConfirmDelete = askyesno(title="Confirmation", message=f"Are you sure you want to delete {CurrentSelectedCartItem.get()} from your cart?")
+
+    if ConfirmDelete == False:
+        return
+
+    CurrentOrder.pop(CurrentSelectedCartItem.get())
+
+    CreateCheckoutPageFrame()
+
+
+
+def PayConfirmation():
+
+    ValidAddress = SetCurrentAddress()
+
+    if not ValidAddress:
+        return
+
+    ansewer = askyesno(title="Confirmation", message=f"Are you sure you want to pay? Your address is: {CurrentAddress.get()}. This will clear your cart.")
+
+    if ansewer == True:
+
+        CurrentOrder.clear()
+        TotalPriceVar.set(0)
+        CurrentAddress.set("")
+
+        CreateHomePageFrame()
+        CreateThankyouPopUp()
+        
+def CreateThankyouPopUp():
+
+            
+        ThankYouPopUp = tkinter.Toplevel(root)
+        ThankYouPopUp.geometry("200x100+500+200")
+        ThankYouPopUp.title("Thank You")
+
+        ThankYouLabel = ttk.Label(ThankYouPopUp, text="Thank you for your order!")
+        ThankYouLabel.pack(expand=True)
+
+        ThankYouPopUp.after(2000, ThankYouPopUp.destroy)
+
+
+def CreateCartTreeview(TreeviewFrame):
+
+    CartTree = ttk.Treeview(TreeviewFrame, height=9)
     CartTree.grid(column=0, row=0, sticky="N", pady=100)
 
 
@@ -261,21 +422,19 @@ def CreateCartTreeview(CheckoutFrameRow):
 
 def UpdateTotalPrice(CompleteOrderValues):
 
-    TotalPriceVar = tkinter.IntVar(value=0)
+    TotalPriceVar.set(0)
 
     for ItemValuesList in CompleteOrderValues:
+        TotalPriceVar.set(TotalPriceVar.get() + ItemValuesList[2])
 
-        for ItemValues in ItemValuesList:
-
-            TotalPriceVar.set(TotalPriceVar.get() + ItemValues[2])
-
+    TotalPriceLabelText.set(f"Total: ${TotalPriceVar.get()}")
 
 
 
 def SortOrderValues():
     global CurrentOrder
 
-    ItemsPriceDict = {"Teriyaki Chicken Sushi": 7, "Salmon Sushi": 6, "Apple Juice": 3, "Pepperoni": 6, "Hawaiian": 6, "Orange Juice": 3, "Italian Meatball": 7, "Veggie Special": 6, "Mango Juice": 4}
+    ItemsPriceDict = {"Teriyaki Chicken Sushi": 7, "Salmon Avo Sushi": 6, "Apple Juice": 3, "Pepperoni Pizza": 6, "Hawaiian Pizza": 6, "Orange Juice": 3, "Italian Meatball": 7, "Veggie Special": 6, "Mango Juice": 4}
 
     CurrentOrderNestedList = [list(item) for item in CurrentOrder.items()]
 
@@ -294,13 +453,13 @@ def SortOrderValues():
 
 def ShowHiSushiMenu():
 
-    HiSushiElements = {"HiSushiBanner": "./Assets/placeholder.png", "Teriyaki Chicken Sushi": "./Assets/placeholder.png", "Salmon Sushi": "./Assets/placeholder.png", "Apple Juice": "./Assets/placeholder.png"}
+    HiSushiElements = {"HiSushiBanner": "./Assets/placeholder.png", "Teriyaki Chicken Sushi": "./Assets/TeriyakiChickenSushi.png", "Salmon Avo Sushi": "./Assets/SalmonAvoSushi.png", "Apple Juice": "./Assets/AppleJuice.png"}
 
     CreateMenuPageFrame(HiSushiElements)
 
 def ShowHeavensPizzaMenu():
 
-    HeavensPizzaElements = {"HeavensPizzaBanner": "./Assets/placeholder.png", "Pepperoni": "./Assets/placeholder.png", "Hawaiian": "./Assets/placeholder.png", "Orange Juice": "./Assets/placeholder.png"}
+    HeavensPizzaElements = {"HeavensPizzaBanner": "./Assets/placeholder.png", "Pepperoni Pizza": "./Assets/PepperoniPizza.png", "Hawaiian Pizza": "./Assets/HawaiianPizza.png", "Orange Juice": "./Assets/OrangeJuice.png"}
 
     CreateMenuPageFrame(HeavensPizzaElements)
 
@@ -329,48 +488,62 @@ def ShowPopUp(CurrentItem):
     PopUpWindow.geometry("200x150+500+200")
     PopUpWindow.title(CurrentItem)
 
+    PopUpWindow.transient(root)
     PopUpWindow.grab_set()
 
     CreatePopUpGrid(PopUpWindow)
 
-    item_quantity_var = tkinter.IntVar(value=CurrentOrder.get(CurrentItem, 0))
+    ItemQuantityVar = tkinter.IntVar(value=CurrentOrder.get(CurrentItem, 0))
 
 
-    PlusButton = ttk.Button(PopUpWindow, text="+", command=lambda: IncreaseItemQuantity(item_quantity_var))
+    PlusButton = ttk.Button(PopUpWindow, text="+", command=lambda: IncreaseItemQuantity(ItemQuantityVar))
     PlusButton.grid(row=0, column=2)
 
-    MinusButton = ttk.Button(PopUpWindow, text="-", command=lambda: DecreaseItemQuantity(item_quantity_var))
+    MinusButton = ttk.Button(PopUpWindow, text="-", command=lambda: DecreaseItemQuantity(ItemQuantityVar))
     MinusButton.grid(row=0, column=0)
 
-    QuantityDisplay = ttk.Label(PopUpWindow, textvariable=item_quantity_var)
+    QuantityDisplay = ttk.Label(PopUpWindow, textvariable=ItemQuantityVar)
     QuantityDisplay.grid(row=0, column=1)
 
-    ExitButton = ttk.Button(PopUpWindow, text="Submit", command=lambda: SubmitOrder(PopUpWindow, CurrentItem, item_quantity_var))
-    ExitButton.grid(row=1, column=1)
+
+    SubmitButton = ttk.Button(PopUpWindow, text="Submit", command=lambda: SubmitOrder(PopUpWindow, CurrentItem, ItemQuantityVar))
+    SubmitButton.grid(row=1, column=1)
 
 
-def IncreaseItemQuantity(quantity_var):
+def IncreaseItemQuantity(QuantityVar):
 
-    CurrentQuantity = quantity_var.get()
-    quantity_var.set(CurrentQuantity + 1)
+    CurrentQuantity = QuantityVar.get()
+    QuantityVar.set(CurrentQuantity + 1)
 
 
-def DecreaseItemQuantity(quantity_var):
+def DecreaseItemQuantity(QuantityVar):
 
-    CurrentQuantity = quantity_var.get()
+    CurrentQuantity = QuantityVar.get()
 
     if CurrentQuantity > 0:
-        quantity_var.set(CurrentQuantity - 1)
+        QuantityVar.set(CurrentQuantity - 1)
 
 
-def SubmitOrder(PopUpWindow, CurrentItem, quantity_var):
+def SubmitOrder(PopUpWindow, CurrentItem, QuantityVar):
     global CurrentOrder
 
-    CurrentItemQuantity = quantity_var.get()
+    CurrentItemQuantity = QuantityVar.get()
 
-    CurrentOrder[CurrentItem] = CurrentItemQuantity
+    if CurrentItemQuantity == 0:
+
+        ansewer = askyesno(title="Confirmation", message=f"Are you sure you don't want {CurrentItem} on your order?")
+
+        if CurrentItem in CurrentOrder and ansewer == True:
+            del CurrentOrder[CurrentItem]
+        elif CurrentItemQuantity == 0 and ansewer == False:
+            return
+
+    else:
+        CurrentOrder[CurrentItem] = CurrentItemQuantity
 
     print(CurrentOrder)
+
+    UpdateTotalPrice(SortOrderValues())
 
     PopUpWindow.destroy()
 
@@ -391,15 +564,15 @@ def CreatePopUpGrid(PopUpWindow):
 
 def CreateHomePageFrame():
 
-    global CurrentQuantityFrameTracker
+    global CurrentFrameTracker
 
 
-    CurrentQuantityFrameTracker.pack_forget()
+    CurrentFrameTracker.pack_forget()
 
     HomePageFrame = ttk.Frame(root)
     HomePageFrame.pack(fill='both', expand=True)
 
-    CurrentQuantityFrameTracker = HomePageFrame
+    CurrentFrameTracker = HomePageFrame
 
 
     CreateHomePageGridAndButtons(HomePageFrame)
@@ -407,30 +580,30 @@ def CreateHomePageFrame():
 
 def CreateMenuPageFrame(Elements):
 
-    global CurrentQuantityFrameTracker
+    global CurrentFrameTracker
 
 
-    CurrentQuantityFrameTracker.pack_forget()
+    CurrentFrameTracker.pack_forget()
 
     MenuPageFrame = ttk.Frame(root)
     MenuPageFrame.pack(fill='both', expand=True)
 
-    CurrentQuantityFrameTracker = MenuPageFrame
+    CurrentFrameTracker = MenuPageFrame
 
 
     CreateMenuPageGridAndButtons(MenuPageFrame, Elements)
 
 def CreateCheckoutPageFrame():
 
-    global CurrentQuantityFrameTracker
+    global CurrentFrameTracker
 
 
-    CurrentQuantityFrameTracker.pack_forget()
+    CurrentFrameTracker.pack_forget()
 
     CheckoutFrame = ttk.Frame(root)
     CheckoutFrame.pack(fill="both", expand=True)
 
-    CurrentQuantityFrameTracker = CheckoutFrame
+    CurrentFrameTracker = CheckoutFrame
 
     CreateCheckoutFrameGridAndButtons(CheckoutFrame)
 
